@@ -1,0 +1,23 @@
+{
+  "name": "System",
+  "version": "1.0.0",
+  "dsa-version": "2.0",
+  "description": "System Java DSLink",
+  "main": "bin/System",
+  "configs": {
+    "handler_class": {
+      "type": "string",
+      "value": "org.iot.dsa.dslink.system.SystemDSLink"
+    },
+    "log": {
+      "desc": "all, trace, debug, fine, warn, info, error, admin, fatal, none",
+      "type": "enum",
+      "value": "info"
+    },
+    "token": {
+      "desc": "Authentication token for the broker.",
+      "type": "string",
+      "value": null
+    }
+  }
+}

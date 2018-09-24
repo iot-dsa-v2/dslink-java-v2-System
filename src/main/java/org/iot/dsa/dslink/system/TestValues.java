@@ -17,6 +17,9 @@ import java.util.ListIterator;
 
 import com.sun.management.*;
 
+import org.iot.dsa.io.json.JsonReader;
+import org.iot.dsa.io.json.JsonWriter;
+
 import oshi.SystemInfo;
 import oshi.hardware.NetworkIF;
 
@@ -29,12 +32,21 @@ public class TestValues {
         MBeanServer plat = ManagementFactory.getPlatformMBeanServer();
         System.out.println("plat "+ plat.getDomains());
 
-
-
         printUsage();
         getmemvalues();
         System.out.println("\n\n");
         hostnet();
+    }
+
+
+    private static void testJson() {
+        JsonWriter writer = new JsonWriter();
+        //writer.
+        writer.key("name");
+        writer.value("John");
+
+        JsonReader reader = new JsonReader();
+        reader.getString();
     }
 
     private static void printUsage() {

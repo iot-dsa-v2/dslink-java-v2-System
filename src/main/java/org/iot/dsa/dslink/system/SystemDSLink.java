@@ -52,6 +52,7 @@ public class SystemDSLink extends DSMainNode implements Runnable {
     private static final String MAC = "macOS";
     private static final String WINDOWS = "Window";
     private static final String LINUX = "Linux";
+    private static final String pidFilePath = "/Users/janardhan/Work/SolutionBuilder/dsa/dsa-server/.pids";
 
     ///////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -130,7 +131,7 @@ public class SystemDSLink extends DSMainNode implements Runnable {
     }
 
     private void displayDiagnosticsModeProcess() {
-        put(SystemDSLinkConstants.PROCESS_NODE, new DiagnosticModeNode(1));
+        put(SystemDSLinkConstants.PROCESS_NODE, new DiagnosticModeNode(1, pidFilePath));
 
     }
 

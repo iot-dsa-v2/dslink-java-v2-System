@@ -52,7 +52,7 @@ public class SystemDSLink extends DSMainNode implements Runnable {
     private static final String MAC = "macOS";
     private static final String WINDOWS = "Window";
     private static final String LINUX = "Linux";
-    private static final String pidFilePath = "/Users/janardhan/Work/SolutionBuilder/dsa/dsa-server/.pids";
+    //private static final String pidFilePath = "/Users/janardhan/Work/SolutionBuilder/dsa/dsa-server/.pids";
 
     ///////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -130,9 +130,9 @@ public class SystemDSLink extends DSMainNode implements Runnable {
         put(SystemDSLinkConstants.NETWORK_INTERFACES, new SystemNetworkInterfaceNode());
     }
 
-    private void displayDiagnosticsModeProcess() {
+    private void displayDiagnosticsModeProcess(String pidFilePath) {
+        System.out.println(pidFilePath);
         put(SystemDSLinkConstants.PROCESS_NODE, new DiagnosticModeNode(1, pidFilePath));
-
     }
 
     // Added by Ketan
@@ -145,15 +145,14 @@ public class SystemDSLink extends DSMainNode implements Runnable {
     protected void onChildChanged(DSInfo info) {
         super.onChildChanged(info);
         if(info.getName().equalsIgnoreCase(SystemDSLinkConstants.POLL_RATE)) {
-            System.out.println("onChildChanged - " +  info.getName() + " value : " + info.getValue());
             stopTimer();
             startTimer(Integer.parseInt(info.getValue().toString()));
         }
         if(info.getName().equalsIgnoreCase(SystemDSLinkConstants.DIAGNOSTICS_MODE)) {
-            if(info.getValue().toString().equalsIgnoreCase(TRUE)) {
-                displayDiagnosticsModeProcess();
-            } else if (info.getValue().toString().equalsIgnoreCase(FALSE)) {
+            if(info.getValue().toString().isEmpty()) {
                 removeDiagnosticsModeNode();
+            } else {
+                displayDiagnosticsModeProcess(info.getValue().toString());
             }
         }
     }
@@ -162,7 +161,6 @@ public class SystemDSLink extends DSMainNode implements Runnable {
         declareDefault(SystemDSLinkConstants.EXECUTE_COMMAND, makeExecuteCommand());
         declareDefault(SystemDSLinkConstants.EXECUTE_COMMAND_STREAM, makeExecuteCommandStream());
         SystemInfo si = new SystemInfo();
-        System.out.println("platform :" + si.getOperatingSystem().getFamily());
         if(si.getOperatingSystem().getFamily().equalsIgnoreCase(MAC)) {
             declareDefault(SystemDSLinkConstants.RUN_APPLE_SCRIPT, makeRunAppleScript());
         } else if (si.getOperatingSystem().getFamily().equalsIgnoreCase(WINDOWS)) {
@@ -193,7 +191,7 @@ public class SystemDSLink extends DSMainNode implements Runnable {
     // System information not changing every sec.
     private void systemInot() {
         //DSLink Settings
-        put(SystemDSLinkConstants.DIAGNOSTICS_MODE, DSBool.valueOf(false));
+        put(SystemDSLinkConstants.DIAGNOSTICS_MODE, DSString.valueOf(".pid File Path"));
         put(SystemDSLinkConstants.POLL_RATE, DSInt.valueOf(1));
 
         SystemInfo si = new SystemInfo();
@@ -211,7 +209,7 @@ public class SystemDSLink extends DSMainNode implements Runnable {
         //NetworkParams networkParams = os.getNetworkParams();
         putA(SystemDSLinkConstants.HOST_NAME, DSString.valueOf(hostName));
         //Architecture
-        putA(SystemDSLinkConstants.ARCHITECTURE, DSString.valueOf(os.getBitness() +"-bit"));
+        putA(SystemDSLinkConstants.ARCHITECTURE, DSString.valueOf(System.getProperty("os.arch")));
         //Operating System
         putA(SystemDSLinkConstants.OPERATING_SYSTEM, DSString.valueOf(os));
         //Platform
@@ -240,18 +238,21 @@ public class SystemDSLink extends DSMainNode implements Runnable {
         LocalDateTime now = LocalDateTime.now();
         putA(SystemDSLinkConstants.SYSTEM_TIME, DSString.valueOf(dtf.format(now)));
         //-- CPU Usage
-        putA(SystemDSLinkConstants.CPU_USAGE, DSString.valueOf( Util.round((100f *processor.getSystemCpuLoad()),0) + " %" ));
+        putA(SystemDSLinkConstants.CPU_USAGE, DSString.valueOf( Util.round((100f * processor.getSystemCpuLoad()),0) + " %" ));
         //Battery Level
         PowerSource[] powerSource = hal.getPowerSources();
         putA(SystemDSLinkConstants.BATTERY_LEVEL, DSString.valueOf( Util.round(powerSource[0].getRemainingCapacity() * 100,0) + " %"));
 
         //--Disk space
         OSFileStore[] fsArray = fileSystem.getFileStores();
-        long usable = fsArray[0].getUsableSpace();
-        long total = fsArray[0].getTotalSpace();
+        long usable = 0;
+        long total = 0;
+        for(int index = 0; index < fsArray.length; index++)  {
+            usable = usable + fsArray[index].getUsableSpace();
+            total = total + fsArray[index].getTotalSpace();
+        }
         putA(SystemDSLinkConstants.TOTAL_DISK_SPACE, DSString.valueOf(Util.formatBytes(total,"mb") ));
         putA(SystemDSLinkConstants.USED_DISK_SPACE, DSString.valueOf(Util.formatBytes(total-usable,"mb")));
-        List<OSProcess> procs = Arrays.asList(os.getProcesses(5, OperatingSystem.ProcessSort.CPU));
         putA(SystemDSLinkConstants.FREE_DISK_SAPCE, DSString.valueOf(Util.formatBytes(usable,"mb")));
         putA(SystemDSLinkConstants.DISK_USAGE, DSString.valueOf(  Util.round((100 - (100d * usable / total)),2) + " %" ));
 
@@ -275,10 +276,8 @@ public class SystemDSLink extends DSMainNode implements Runnable {
     private void putA(String metrickey, DSIValue value) {
         DSInfo info = getInfo(metrickey);
         if(info==null) {
-            //System.out.println(metrickey + " is null setdefault"+ metrickey);
             declareDefault(metrickey, value).setReadOnly(true);
         } else {
-            //System.out.println(metrickey + " is found old "+ info.getValue() + " new " + value);
             put(info, value);
         }
     }
@@ -301,7 +300,6 @@ public class SystemDSLink extends DSMainNode implements Runnable {
         StringBuffer response = new StringBuffer();
         Integer exitCode = -1;
         try {
-            System.out.println("Command :"+ parameters.getString(SystemDSLinkConstants.COMMAND));
             Process process = Runtime.getRuntime().exec(parameters.getString(SystemDSLinkConstants.COMMAND));
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));
@@ -335,7 +333,6 @@ public class SystemDSLink extends DSMainNode implements Runnable {
     private ActionResult executeCommandStream(DSAction action, DSInfo actionInfo, DSMap parameters) {
         StringBuffer response = new StringBuffer();
         try {
-            System.out.println("Command :"+ parameters.getString(SystemDSLinkConstants.COMMAND));
             Process process = Runtime.getRuntime().exec(parameters.getString(SystemDSLinkConstants.COMMAND));
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));
@@ -385,18 +382,15 @@ public class SystemDSLink extends DSMainNode implements Runnable {
                 "\tcancel button 1 ¬\n" +
                 "\tgiving up after 2";
 
-        System.out.println("Script :" + parameters.getString(SystemDSLinkConstants.SCRIPT));
 
         try
         {
             if(parameters.getString(SystemDSLinkConstants.SCRIPT) == null) {
                 String[] args = { "osascript", "-e", appleCMD };
                 Process process = runtime.exec(args);
-                System.out.println(process);
             } else {
                 String[] args = { "osascript", "-e", parameters.getString(SystemDSLinkConstants.SCRIPT) };
                 Process process = runtime.exec(args);
-                System.out.println(process);
             }
         }
         catch (IOException e)

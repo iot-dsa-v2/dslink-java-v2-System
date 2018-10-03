@@ -28,29 +28,29 @@ This section outlines the hierarchy of nodes defined by this link.
 ## SystemDSLink
 
 This is the root node of the link. It creates below described parameters as nodes and display those information/values.
-    - 'Architecture' - Provides 64 bit or 32 bit details
-    - 'Battery Level' - Displays the battery percentage of system
-    - 'Cpu Usage' - Displays the overall cpu usage.
-    - 'Diagnostic Mode' - On providing appropriate pid file path, it displays memory usage and open file information of all connected downstreams dslinks.
-    - 'Disk Usage' - Displays disk usage information
-    - 'Free Disk Space' - Displays the free disk space memory
-    - 'Free Memory' - Displays free memory
-    - 'Hardware Identifier' - NA
-    - 'Host Name' - Displays the host name of system
-    - 'Memory Usage' - Displays how much memory has been used.
-    - 'Model' - model of system
-    - 'Open Files' - Displays open files count
-    - 'Operating System' - Displays which OS used in system
-    - 'Platform' - Displays the platform of system
-    - 'Poll Rate' - Based on poll rate (seconds), the system information is updated in metric panel.
-    - 'processes' - Displays how many processes are running
-    - 'Processor Count' - Display the processor count
-    - 'Processor Model' - Displays the processor model of system
-    - 'System Time' - Displays the current time of system
-    - 'Total Disk Space' - Displays complete hard disk space (all partition)
-    - 'Total Memory' - Displays total memory of RAM
-    - 'Used Disk Space' - Displays how much disk space is used
-    - 'Used Memory' - Displays the RAM memory used
+    - 'Architecture' : Provides 64 bit or 32 bit details
+    - 'Battery Level' : Displays the battery percentage of system
+    - 'Cpu Usage' : Displays the overall cpu usage.
+    - 'Diagnostic Mode' : On providing appropriate pid file path, it displays memory usage and open file information of all connected downstreams dslinks.
+    - 'Disk Usage' : Displays disk usage information
+    - 'Free Disk Space' : Displays the free disk space memory
+    - 'Free Memory' : Displays free memory
+    - 'Hardware Identifier' : NA
+    - 'Host Name' : Displays the host name of system
+    - 'Memory Usage' : Displays how much memory has been used.
+    - 'Model' : model of system
+    - 'Open Files' : Displays open files count
+    - 'Operating System' : Displays which OS used in system
+    - 'Platform' : Displays the platform of system
+    - 'Poll Rate' : Based on poll rate (seconds), the system information is updated in metric panel.
+    - 'processes' : Displays how many processes are running
+    - 'Processor Count' : Display the processor count
+    - 'Processor Model' : Displays the processor model of system
+    - 'System Time' : Displays the current time of system
+    - 'Total Disk Space' : Displays complete hard disk space (all partition)
+    - 'Total Memory' : Displays total memory of RAM
+    - 'Used Disk Space' : Displays how much disk space is used
+    - 'Used Memory' : Displays the RAM memory used
 
 
 _Child Nodes_

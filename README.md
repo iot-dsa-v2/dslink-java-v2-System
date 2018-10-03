@@ -16,10 +16,42 @@ This link was built using the DSLink Java SDK which can be found
 [here](https://github.com/iot-dsa-v2/sdk-dslink-java-v2).
 
 
+## Link Architecture
+
+This section outlines the hierarchy of nodes defined by this link.
+
+- _SystemDslink_ - The root node of the link, displays some system hardware information and has an action for command line operations.
+  - _SystemNetworkNetfaceNode_ - A node representing network related information.
+  - _(Enabled on condition based)DiagnosticModeNode_ - A node representing all connected downstreams dslinks, memory and open file information.
+
+
 ## SystemDSLink
 
-This is the root node of the link.  It creates required nodes to display System information,
-Continuously updates the system information only when the node is subscribed.
+This is the root node of the link. It creates below described parameters as nodes and display those information/values.
+    - 'Architecture' - Provides 64 bit or 32 bit details
+    - 'Battery Level' - Displays the battery percentage of system
+    - 'Cpu Usage' - Displays the overall cpu usage.
+    - 'Diagnostic Mode' - On providing appropriate pid file path, it displays memory usage and open file information of all connected downstreams dslinks.
+    - 'Disk Usage' - Displays disk usage information
+    - 'Free Disk Space' - Displays the free disk space memory
+    - 'Free Memory' - Displays free memory
+    - 'Hardware Identifier' - NA
+    - 'Host Name' - Displays the host name of system
+    - 'Memory Usage' - Displays how much memory has been used.
+    - 'Model' - model of system
+    - 'Open Files' - Displays open files count
+    - 'Operating System' - Displays which OS used in system
+    - 'Platform' - Displays the platform of system
+    - 'Poll Rate' - Based on poll rate (seconds), the system information is updated in metric panel.
+    - 'processes' - Displays how many processes are running
+    - 'Processor Count' - Display the processor count
+    - 'Processor Model' - Displays the processor model of system
+    - 'System Time' - Displays the current time of system
+    - 'Total Disk Space' - Displays complete hard disk space (all partition)
+    - 'Total Memory' - Displays total memory of RAM
+    - 'Used Disk Space' - Displays how much disk space is used
+    - 'Used Memory' - Displays the RAM memory used
+
 
 _Child Nodes_
 
@@ -27,10 +59,21 @@ _Child Nodes_
 
 This is the child node of root node of the link.  It creates required nodes to display Network information.
 
-//TODO
+
+## DiagnosticModeNode
+
+This is the conditioned child node of root node of the link.  It will be created only when appropriate pid file path given in Diagnostic Mode.
+It displays memory usage and open files of all connected downstream dslinks.
 
 
 ## Acknowledgements
+
+SDK-DSLINK-JAVA
+
+This software contains unmodified binary redistributions of
+[sdk-dslink-java-v2](https://github.com/iot-dsa-v2/sdk-dslink-java-v2), which is licensed
+and available under the Apache License 2.0. An original copy of the license agreement can be found
+at https://github.com/iot-dsa-v2/sdk-dslink-java-v2/blob/master/LICENSE
 
 ## History
 

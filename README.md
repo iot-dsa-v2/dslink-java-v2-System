@@ -51,6 +51,26 @@ This section outlines the hierarchy of nodes defined by this link.
     - `Total Memory` : Displays total memory of RAM
     - `Used Disk Space` : Displays how much disk space is used
     - `Used Memory` : Displays the RAM memory used
+    
+**Actions**
+
+- *Execute Command*  : System administration utility commands can be excuted.
+  - `Command` : Required. Command (Ex: ipconfig/ifconfig).
+  - `Output` : Displays the response of requested query/command. 
+  - `ExitCode` : return value of the executed command
+- *Execute Command Stream* : System administration utility commands can be excuted and result can be seen in table format.
+  - `Command` : Required. Command (Ex: ipconfig/ifconfig).
+  - `Output`- : Displays the response of requested query/command in table format.
+
+- Mac:
+  - *Run Apple Scriptm* : Executes Apple scripts which can be used to automate actions on Macintosh computers.
+    - `Script` : Required. Any apple scripts (Ex: say "Hello, world!"/display dialog "Hello, world!").
+    - `Output`- : Returns the response from scrips excecuted.
+- Windows:
+  - *Read WMIC Data* : Executes WMIC commands which allows users to performs Windows Management Instrumentation (WMI) operations with a command prompt.
+    - `Script` : Required. Any WMIC commands (Ex: CONTEXT/OS).
+    - `Output`- : Returns the response from command excecuted in table format.
+  
 
 
 _Child Nodes_

@@ -27,7 +27,7 @@ This section outlines the hierarchy of nodes defined by this link.
 
 ## SystemDSLink
 
-This is the root node of the link. It creates below described parameters as nodes and display those information/values.
+- This is the root node of the link. It creates below described parameters as nodes and display those information/values.
     - 'Architecture' : Provides 64 bit or 32 bit details
     - 'Battery Level' : Displays the battery percentage of system
     - 'Cpu Usage' : Displays the overall cpu usage.

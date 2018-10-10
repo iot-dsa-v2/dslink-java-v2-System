@@ -1,14 +1,9 @@
 package org.iot.dsa.dslink.system;
 
-import org.iot.dsa.DSRuntime;
-import org.iot.dsa.io.json.JsonReader;
-import org.iot.dsa.node.DSInfo;
 import org.iot.dsa.node.DSNode;
-import org.iot.dsa.node.DSString;
 import org.json.JSONObject;
 
 import java.util.Iterator;
-import java.util.function.Consumer;
 
 public class DiagnosticModeNode extends DSNode {
 

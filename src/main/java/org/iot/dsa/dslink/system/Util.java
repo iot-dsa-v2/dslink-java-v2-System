@@ -1,5 +1,8 @@
 package org.iot.dsa.dslink.system;
 
+import org.iot.dsa.node.DSMap;
+import org.iot.dsa.node.DSMetadata;
+import org.iot.dsa.node.DSValueType;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -130,6 +133,10 @@ public class Util {
             e.printStackTrace();
         }
         return buffString.toString();
+    }
+
+    public static DSMap makeColumn(String name, DSValueType type) {
+        return new DSMetadata().setName(name).setType(type).getMap();
     }
 
 }

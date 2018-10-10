@@ -2,28 +2,29 @@ package org.iot.dsa.dslink.system;
 
 import org.iot.dsa.DSRuntime;
 import org.iot.dsa.dslink.DSMainNode;
-import org.iot.dsa.node.DSBool;
 import org.iot.dsa.node.DSIValue;
 import org.iot.dsa.node.DSInfo;
 import org.iot.dsa.node.DSInt;
 import org.iot.dsa.node.DSMap;
+import org.iot.dsa.node.DSMetadata;
 import org.iot.dsa.node.DSString;
 import org.iot.dsa.node.DSValueType;
 import org.iot.dsa.node.action.ActionInvocation;
 import org.iot.dsa.node.action.ActionResult;
 import org.iot.dsa.node.action.ActionSpec;
+import org.iot.dsa.node.action.ActionTable;
 import org.iot.dsa.node.action.DSAction;
 import org.iot.dsa.node.action.DSActionValues;
-import org.iot.dsa.util.DSException;
 
-import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import oshi.SystemInfo;
@@ -33,7 +34,6 @@ import oshi.hardware.HardwareAbstractionLayer;
 import oshi.hardware.PowerSource;
 import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
-import oshi.software.os.OSProcess;
 import oshi.software.os.OperatingSystem;
 
 /**
@@ -317,36 +317,84 @@ public class SystemDSLink extends DSMainNode implements Runnable {
         return getActionResponse(action, response.toString(), exitCode);
     }
 
+
     private DSAction makeExecuteCommandStream() {
         DSAction act = new DSAction() {
             @Override
             public ActionResult invoke(DSInfo info, ActionInvocation invocation) {
-                return ((SystemDSLink) info.getParent()).executeCommandStream(this, info, invocation.getParameters());
+                return ((SystemDSLink) info.getParent()).executeOutputStream(this, invocation.getParameters());
             }
         };
         act.addParameter(SystemDSLinkConstants.COMMAND, DSValueType.STRING, null);
         act.setResultType(ActionSpec.ResultType.CLOSED_TABLE);
-        act.addValueResult("output", DSValueType.DYNAMIC);
         return act;
     }
 
-    private ActionResult executeCommandStream(DSAction action, DSInfo actionInfo, DSMap parameters) {
-        StringBuffer response = new StringBuffer();
+    private ActionTable executeOutputStream(DSAction action, DSMap parameters) {
+
+        List<DSMap> cols = new LinkedList<DSMap>();
+        cols.add(Util.makeColumn("type", DSValueType.STRING));
+        cols.add(Util.makeColumn("value", DSValueType.STRING));
+
+        ArrayList<String> list = new ArrayList<String>();
+
         try {
             Process process = Runtime.getRuntime().exec(parameters.getString(SystemDSLinkConstants.COMMAND));
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
-                response.append(line);
-                response.append("\n");
+                list.add(line);
             }
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
-            return getActionResponse(action, e.getMessage(), 0);
         }
-        return getActionResponse(action, response.toString(), 0);
+
+        Iterator iterator = list.iterator();
+
+        return getOutputStreamActionTable(action, cols, iterator);
+    }
+
+    private ActionTable getOutputStreamActionTable(final DSAction action, final List<DSMap> cols, final Iterator iterator) {
+
+        return new ActionTable() {
+            @Override
+            public ActionSpec getAction() {
+                return action;
+            }
+
+            @Override
+            public void onClose() {
+
+            }
+
+            @Override
+            public boolean next() {
+                if(iterator.hasNext()) {
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public int getColumnCount() {
+                return cols.size();
+            }
+
+            @Override
+            public void getMetadata(int index, DSMap bucket) {
+                bucket.putAll(cols.get(index));
+            }
+
+            @Override
+            public DSIValue getValue(int index) {
+                if(index == 0){
+                    return DSString.valueOf("stdout");
+                }
+                return DSString.valueOf(iterator.next());
+            }
+        };
     }
 
     private DSAction makeRunAppleScript() {

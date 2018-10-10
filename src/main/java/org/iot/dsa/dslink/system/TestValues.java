@@ -1,24 +1,19 @@
 package org.iot.dsa.dslink.system;
 
+import org.iot.dsa.io.json.JsonReader;
+import org.iot.dsa.io.json.JsonWriter;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
-
-import javax.management.MBeanServer;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.InetAddress;
-import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
-import java.util.List;
-import java.util.ListIterator;
 
-import com.sun.management.*;
-
-import org.iot.dsa.io.json.JsonReader;
-import org.iot.dsa.io.json.JsonWriter;
+import javax.management.MBeanServer;
 
 import oshi.SystemInfo;
 import oshi.hardware.NetworkIF;

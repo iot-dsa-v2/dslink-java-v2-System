@@ -31,7 +31,7 @@ This section outlines the hierarchy of nodes defined by this link.
     - `Architecture` : Provides 64 bit or 32 bit details
     - `Battery Level` : Displays the battery percentage of system
     - `Cpu Usage` : Displays the overall cpu usage.
-    - `Diagnostic Mode` : On providing appropriate pid file path, it displays memory usage and open file information of all connected downstreams dslinks.
+    - `Diagnostic Mode` : Set it to true to display memory usage and open file information of all connected downstreams dslinks.
     - `Disk Usage` : Displays disk usage information
     - `Free Disk Space` : Displays the free disk space memory
     - `Free Memory` : Displays free memory
@@ -83,8 +83,7 @@ _Child Nodes_
 
 ## DiagnosticModeNode
 
-This is the conditioned child node of root node of the link.  It will be created only when appropriate pid file path given in Diagnostic Mode.
-It displays memory usage and open files of all connected downstream dslinks.
+This is the conditioned child node of root node of the link.  It will be created only when setting to true the Diagnostic Mode. It displays memory usage and open files of all connected downstream dslinks.
 
 
 ## Acknowledgements

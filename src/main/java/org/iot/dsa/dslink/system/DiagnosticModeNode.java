@@ -14,9 +14,8 @@ public class DiagnosticModeNode extends DSNode {
 
     }
 
-    public DiagnosticModeNode(Integer pollRate, String filePath) {
+    public DiagnosticModeNode(Integer pollRate) {
         this.pollRate = pollRate;
-        this.filePath = filePath;
     }
 
     @Override
@@ -36,7 +35,7 @@ public class DiagnosticModeNode extends DSNode {
     }
 
     private void createDataFlowNode() {
-        JSONObject response = Util.calculatePID(this.filePath);
+        JSONObject response = Util.calculatePID();
         Iterator resIterator = response.keys();
 
         while(resIterator.hasNext()) {

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "dsa-version": "2.0",
   "description": "System Java DSLink",
-  "main": "bin/System",
+  "main": "bin/dslink-java-v2-System",
   "configs": {
     "handler_class": {
       "type": "string",

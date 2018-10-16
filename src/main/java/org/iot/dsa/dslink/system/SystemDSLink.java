@@ -2,11 +2,11 @@ package org.iot.dsa.dslink.system;
 
 import org.iot.dsa.DSRuntime;
 import org.iot.dsa.dslink.DSMainNode;
+import org.iot.dsa.node.DSBool;
 import org.iot.dsa.node.DSIValue;
 import org.iot.dsa.node.DSInfo;
 import org.iot.dsa.node.DSInt;
 import org.iot.dsa.node.DSMap;
-import org.iot.dsa.node.DSMetadata;
 import org.iot.dsa.node.DSString;
 import org.iot.dsa.node.DSValueType;
 import org.iot.dsa.node.action.ActionInvocation;
@@ -52,7 +52,6 @@ public class SystemDSLink extends DSMainNode implements Runnable {
     private static final String MAC = "macOS";
     private static final String WINDOWS = "Window";
     private static final String LINUX = "Linux";
-    //private static final String pidFilePath = "/Users/janardhan/Work/SolutionBuilder/dsa/dsa-server/.pids";
 
     ///////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -130,9 +129,8 @@ public class SystemDSLink extends DSMainNode implements Runnable {
         put(SystemDSLinkConstants.NETWORK_INTERFACES, new SystemNetworkInterfaceNode());
     }
 
-    private void displayDiagnosticsModeProcess(String pidFilePath) {
-        System.out.println(pidFilePath);
-        put(SystemDSLinkConstants.PROCESS_NODE, new DiagnosticModeNode(1, pidFilePath));
+    private void displayDiagnosticsModeProcess() {
+        put(SystemDSLinkConstants.PROCESS_NODE, new DiagnosticModeNode(1));
     }
 
     // Added by Ketan
@@ -149,10 +147,10 @@ public class SystemDSLink extends DSMainNode implements Runnable {
             startTimer(Integer.parseInt(info.getValue().toString()));
         }
         if(info.getName().equalsIgnoreCase(SystemDSLinkConstants.DIAGNOSTICS_MODE)) {
-            if(info.getValue().toString().isEmpty()) {
+            if(info.getValue().toString().equalsIgnoreCase(FALSE)) {
                 removeDiagnosticsModeNode();
-            } else {
-                displayDiagnosticsModeProcess(info.getValue().toString());
+            } else if (info.getValue().toString().equalsIgnoreCase(TRUE)) {
+                displayDiagnosticsModeProcess();
             }
         }
     }
@@ -191,7 +189,7 @@ public class SystemDSLink extends DSMainNode implements Runnable {
     // System information not changing every sec.
     private void systemInot() {
         //DSLink Settings
-        put(SystemDSLinkConstants.DIAGNOSTICS_MODE, DSString.valueOf(".pid File Path"));
+        put(SystemDSLinkConstants.DIAGNOSTICS_MODE, DSBool.valueOf(false));
         put(SystemDSLinkConstants.POLL_RATE, DSInt.valueOf(1));
 
         SystemInfo si = new SystemInfo();

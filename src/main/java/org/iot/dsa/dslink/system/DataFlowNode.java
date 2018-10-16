@@ -47,7 +47,7 @@ public class DataFlowNode extends DSNode implements Runnable {
 
     private void updateDataNodeMetrics() {
 
-        JSONObject response = Util.calculatePID(this.filePath);
+        JSONObject response = Util.calculatePID();
         Iterator resIterator = response.keys();
 
         while(resIterator.hasNext()) {

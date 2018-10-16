@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -26,6 +28,7 @@ public class Util {
     private static final double SPACE_MB = 1024 * SPACE_KB;
     private static final double SPACE_GB = 1024 * SPACE_MB;
     private static final double SPACE_TB = 1024 * SPACE_GB;
+    private static final int PATH_COUNT = 2;
 
     public static String formatBytes(long sizeInBytes, String max ) {
         NumberFormat nf = new DecimalFormat();
@@ -69,13 +72,13 @@ public class Util {
         return nf.format(d);
     }
 
-    public static JSONObject calculatePID(String filePath) {
+    public static JSONObject calculatePID() {
         JSONObject response= new JSONObject();
         SystemInfo si = new SystemInfo();
 
         OperatingSystem os = si.getOperatingSystem();
 
-        String pidList  = readFile(filePath);
+        String pidList  = readFile();
         String[] strArr = getPidList(pidList);
 
         List<OSProcess> procs = Arrays.asList(os.getProcesses(os.getProcessCount(), OperatingSystem.ProcessSort.CPU));
@@ -116,8 +119,24 @@ public class Util {
         return pidList.split(",");
     }
 
-    public static String readFile(String filePath) {
-        File file = new File(filePath);
+    public static String readFile() {
+        int count = 0;
+        String fPath = null;
+        try {
+            fPath = new File(".").getCanonicalPath();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        while(count < PATH_COUNT) {
+            Path path = Paths.get(fPath);
+            fPath = path.getParent().toString();
+            count++;
+        }
+
+        fPath = fPath.concat("/.pids");
+
+        File file = new File(fPath);
 
         StringBuffer buffString = new StringBuffer();
         BufferedReader br = null;
@@ -132,6 +151,7 @@ public class Util {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return buffString.toString();
     }
 

@@ -3,7 +3,6 @@ package org.iot.dsa.dslink.system;
 import org.iot.dsa.node.DSMap;
 import org.iot.dsa.node.DSMetadata;
 import org.iot.dsa.node.DSValueType;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,8 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.List;
 
 import oshi.SystemInfo;
 import oshi.software.os.OSProcess;
@@ -72,39 +69,19 @@ public class Util {
         return nf.format(d);
     }
 
-    public static JSONObject calculatePID() {
-        JSONObject response= new JSONObject();
-        SystemInfo si = new SystemInfo();
-
-        OperatingSystem os = si.getOperatingSystem();
-
+    public static String[] getPIDList() {
         String pidList  = readFile();
         String[] strArr = getPidList(pidList);
-
-        List<OSProcess> procs = Arrays.asList(os.getProcesses(os.getProcessCount(), OperatingSystem.ProcessSort.CPU));
-
-        for (int i = 0; i < procs.size() && i < os.getProcessCount(); i++) {
-            OSProcess p = procs.get(i);
-            if(p.getName().equalsIgnoreCase("dart")) {
-                for (int index = 0; index < strArr.length; index = index + 2) {
-                    String pid = strArr[index].substring(1, strArr[index].length()-1);
-                    if (String.valueOf(p.getProcessID()).equalsIgnoreCase(pid)) {
-                        String dfName = strArr[index+1].substring(1, strArr[index+1].length()-1);
-                        response.put(pid, getDFDetails(dfName, "sample", FormatUtil.formatBytes(p.getResidentSetSize()), String.valueOf(p.getOpenFiles())));
-                    }
-                }
-            }
-        }
-        return response;
+        return strArr;
     }
 
-    public static JSONObject getDFDetails(String linkName, String cmd, String memUsg, String opnFl){
-        JSONObject dslink = new JSONObject();
-        dslink.put("LinkName", linkName);
-        dslink.put("Command", cmd);
-        dslink.put("MemoryUsage", memUsg);
-        dslink.put("OpenFile", opnFl);
-        return dslink ;
+    public static String[] getPIDInfo(int pid) {
+        System.out.println("pid :" +pid);
+        SystemInfo si = new SystemInfo();
+        OperatingSystem os = si.getOperatingSystem();
+        OSProcess p = os.getProcess(pid);
+        String[] strArr = {FormatUtil.formatBytes(p.getResidentSetSize()), String.valueOf(p.getOpenFiles())};
+        return strArr;
     }
 
     public static String[] getPidList(String pidList) {

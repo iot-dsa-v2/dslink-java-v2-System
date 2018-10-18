@@ -1,14 +1,10 @@
 package org.iot.dsa.dslink.system;
 
 import org.iot.dsa.node.DSNode;
-import org.json.JSONObject;
-
-import java.util.Iterator;
 
 public class DiagnosticModeNode extends DSNode {
 
     private Integer pollRate = 0;
-    private String filePath = null;
 
     public DiagnosticModeNode() {
 
@@ -35,16 +31,11 @@ public class DiagnosticModeNode extends DSNode {
     }
 
     private void createDataFlowNode() {
-        JSONObject response = Util.calculatePID();
-        Iterator resIterator = response.keys();
-
-        while(resIterator.hasNext()) {
-            JSONObject details = (JSONObject) response.get((String) resIterator.next());
-            String linkName = details.getString("LinkName");
-            String cmd = details.getString("Command");
-            String memUsg = details.getString("MemoryUsage");
-            String opnFl = details.getString("OpenFile");
-            put(linkName, new DataFlowNode(this.pollRate, this.filePath, cmd, memUsg, opnFl));
+        String[] strArr = Util.getPIDList();
+        for (int index = 0; index < strArr.length; index = index + 2) {
+            String pid = strArr[index].substring(1, strArr[index].length()-1);
+            String linkName = strArr[index+1].substring(1, strArr[index+1].length()-1);
+            put(linkName, new DataFlowNode(Integer.parseInt(pid), this.pollRate));
         }
     }
 }

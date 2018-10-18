@@ -25,7 +25,6 @@ repositories {
 dependencies {
     implementation 'com.github.iot-dsa-v2:sdk-dslink-java-v2:+'
     compile 'com.github.oshi:oshi-core:3.6.0'
-    compile 'org.json:json:20171018'
 }
 
 applicationDistribution.from(new File(project.projectDir, "/dslink.json"))

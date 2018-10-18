@@ -72,10 +72,6 @@ public class SystemDSLink extends DSMainNode implements Runnable {
     @Override
     public void run() {
         updateMetrics();
-        DSInfo info = getInfo(SystemDSLinkConstants.PROCESS_NODE);
-        if(info!=null) {
-            //displayDiagnosticsModeProcess();
-        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -129,8 +125,8 @@ public class SystemDSLink extends DSMainNode implements Runnable {
         put(SystemDSLinkConstants.NETWORK_INTERFACES, new SystemNetworkInterfaceNode());
     }
 
-    private void displayDiagnosticsModeProcess() {
-        put(SystemDSLinkConstants.PROCESS_NODE, new DiagnosticModeNode(1));
+    private void displayDiagnosticsModeProcess(Integer pollRate) {
+        put(SystemDSLinkConstants.PROCESS_NODE, new DiagnosticModeNode(pollRate));
     }
 
     // Added by Ketan
@@ -145,12 +141,16 @@ public class SystemDSLink extends DSMainNode implements Runnable {
         if(info.getName().equalsIgnoreCase(SystemDSLinkConstants.POLL_RATE)) {
             stopTimer();
             startTimer(Integer.parseInt(info.getValue().toString()));
+            if(getInfo(SystemDSLinkConstants.PROCESS_NODE) != null) {
+                removeDiagnosticsModeNode();
+                displayDiagnosticsModeProcess(Integer.parseInt(info.getValue().toString()));
+            }
         }
         if(info.getName().equalsIgnoreCase(SystemDSLinkConstants.DIAGNOSTICS_MODE)) {
             if(info.getValue().toString().equalsIgnoreCase(FALSE)) {
                 removeDiagnosticsModeNode();
             } else if (info.getValue().toString().equalsIgnoreCase(TRUE)) {
-                displayDiagnosticsModeProcess();
+                displayDiagnosticsModeProcess(1);
             }
         }
     }

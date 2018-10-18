@@ -2,16 +2,10 @@ package org.iot.dsa.dslink.system;
 
 import org.iot.dsa.DSRuntime;
 import org.iot.dsa.node.DSNode;
-import org.json.JSONObject;
-
-import java.util.Iterator;
 
 public class DataFlowNode extends DSNode implements Runnable {
 
-    private String cmd;
-    private String memUsg;
-    private String opnFl;
-    private String filePath;
+    private Integer pid;
     private Integer pollRate;
     private DSRuntime.Timer timer;
 
@@ -19,12 +13,9 @@ public class DataFlowNode extends DSNode implements Runnable {
 
     }
 
-    public DataFlowNode(Integer pollRate, String filePath, String cmd, String memUsg, String opnFl) {
+    public DataFlowNode(Integer pid, Integer pollRate) {
         this.pollRate = pollRate;
-        this.cmd = cmd;
-        this.memUsg = memUsg;
-        this.opnFl = opnFl;
-        this.filePath = filePath;
+        this.pid = pid;
     }
 
     @Override
@@ -32,31 +23,19 @@ public class DataFlowNode extends DSNode implements Runnable {
         super.declareDefaults();
     }
 
-    private void putValuesDF() {
-        put(SystemDSLinkConstants.COMMAND, this.cmd);
-        put(SystemDSLinkConstants.MEMORY_USAGE, this.memUsg);
-        put(SystemDSLinkConstants.OPEN_FILES, this.opnFl);
-    }
 
     @Override
     protected void onStable() {
         super.onStable();
-        putValuesDF();
-        //startTimer(1);
+        setDataNodeMetrics();
+        startTimer(this.pollRate);
     }
 
-    private void updateDataNodeMetrics() {
-
-        JSONObject response = Util.calculatePID();
-        Iterator resIterator = response.keys();
-
-        while(resIterator.hasNext()) {
-            JSONObject details = (JSONObject) response.get((String) resIterator.next());
-
-            put(SystemDSLinkConstants.COMMAND, details.getString("Command"));
-            put(SystemDSLinkConstants.MEMORY_USAGE, details.getString("MemoryUsage"));
-            put(SystemDSLinkConstants.OPEN_FILES, details.getString("OpenFile"));
-        }
+    private void setDataNodeMetrics() {
+        String[] arr = Util.getPIDInfo(pid);
+        put(SystemDSLinkConstants.COMMAND, "Command");
+        put(SystemDSLinkConstants.MEMORY_USAGE, arr[0]);
+        put(SystemDSLinkConstants.OPEN_FILES, arr[1]);
     }
 
     /**
@@ -64,7 +43,7 @@ public class DataFlowNode extends DSNode implements Runnable {
      */
     @Override
     public void run() {
-        updateDataNodeMetrics();
+        setDataNodeMetrics();
     }
 
     private void startTimer(int seconds) {

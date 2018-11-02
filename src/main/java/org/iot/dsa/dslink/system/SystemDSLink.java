@@ -413,34 +413,11 @@ public class SystemDSLink extends DSMainNode implements Runnable {
         String message = "Not Implemented Apple Script !!!";
         Runtime runtime = Runtime.getRuntime();
 
-        String appleCMD = "display alert \"Hello, world!\" buttons {\"Rudely decline\", \"Happily accept\"}\n" +
-                "set theAnswer to button returned of the result\n" +
-                "if theAnswer is \"Happily accept\" then\n" +
-                "\tbeep 5\n" +
-                "else\n" +
-                "\tsay \"Piffle!\"\n" +
-                "end if\n";
-
-        String sample = "set resultAlertReply to display alert \"Alert Text\" ¬\n" +
-                "\tas warning ¬\n" +
-                "\tbuttons {\"Skip\", \"Okay\", \"Cancel\"} ¬\n" +
-                "\tdefault button 2 ¬\n" +
-                "\tcancel button 1 ¬\n" +
-                "\tgiving up after 2";
-
-
-        try
-        {
-            if(parameters.getString(SystemDSLinkConstants.SCRIPT) == null) {
-                String[] args = { "osascript", "-e", appleCMD };
-                Process process = runtime.exec(args);
-            } else {
-                String[] args = { "osascript", "-e", parameters.getString(SystemDSLinkConstants.SCRIPT) };
-                Process process = runtime.exec(args);
-            }
+        try {
+            String[] args = { "osascript", "-e", parameters.getString(SystemDSLinkConstants.SCRIPT) };
+            Process process = runtime.exec(args);
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             e.printStackTrace();
         }
         return getActionResponse(action, message, 0);
